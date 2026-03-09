@@ -8,11 +8,14 @@ import os
 
 load_dotenv()
 
+POSTGRES_URL = os.getenv("POSTGRES_URL")
+
+
 # ============================================================
 # DESCOMENTE E INSTALE QUANDO FOR ADICIONAR OS OUTROS BANCOS:
 # pip install psycopg2-binary pymongo redis
 # ============================================================
-# import psycopg2
+import psycopg2
 # from pymongo import MongoClient
 # import redis
 
@@ -49,25 +52,29 @@ except Exception as e:
 # ============================================================
 # ⏳ POSTGRESQL (SUPABASE) - PREENCHER DEPOIS
 # ============================================================
-# POSTGRES_URL = "postgresql://postgres:SENHA@db.XXXX.supabase.co:5432/postgres"
-#
-# try:
-#     pg_conn = psycopg2.connect(POSTGRES_URL)
-#     cur = pg_conn.cursor()
-#     cur.execute("""
-#         CREATE TABLE IF NOT EXISTS users (
-#             id SERIAL PRIMARY KEY,
-#             name VARCHAR(100),
-#             email VARCHAR(100) UNIQUE,
-#             balance NUMERIC DEFAULT 0
-#         );
-#     """)
-#     pg_conn.commit()
-#     cur.close()
-#     print("✅ PostgreSQL conectado com sucesso!")
-# except Exception as e:
-#     print(f"❌ PostgreSQL erro: {e}")
-#     pg_conn = None
+
+# ============================================================
+# ✅ POSTGRESQL (SUPABASE)
+# ============================================================
+POSTGRES_URL = os.getenv("POSTGRES_URL")
+
+try:
+    pg_conn = psycopg2.connect(POSTGRES_URL)
+    cur = pg_conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100),
+            email VARCHAR(100) UNIQUE,
+            balance NUMERIC DEFAULT 0
+        );
+    """)
+    pg_conn.commit()
+    cur.close()
+    print("✅ PostgreSQL conectado com sucesso!")
+except Exception as e:
+    print(f"❌ PostgreSQL erro: {e}")
+    pg_conn = None
 
 # ============================================================
 # ✅ MONGODB (ATLAS)
@@ -112,11 +119,12 @@ def home():
         neo4j_status = "❌ Desconectado"
 
     mongodb_status = "✅ Conectado" if mongo_db is not None else "❌ Desconectado"
+    postgres_status = "✅ Conectado" if pg_conn is not None else "❌ Desconectado"
 
     return jsonify({
         "backend": "GameHub Online",
         "neo4j": neo4j_status,
-        "postgres": "⏳ Pendente - Supabase",
+        "postgres": postgres_status,
         "mongodb": mongodb_status,
         "redis": "⏳ Pendente - Upstash"
     })
@@ -177,36 +185,58 @@ def get_all_nodes():
 
 @app.route("/users", methods=["GET"])
 def get_users():
-    # DESCOMENTE QUANDO CONFIGURAR O POSTGRESQL
-    # try:
-    #     cur = pg_conn.cursor()
-    #     cur.execute("SELECT id, name, email, balance FROM users")
-    #     rows = cur.fetchall()
-    #     cur.close()
-    #     users = [{"id": r[0], "name": r[1], "email": r[2], "balance": str(r[3])} for r in rows]
-    #     return jsonify(users)
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-    return jsonify({"info": "⏳ PostgreSQL ainda não configurado. Cole a URL do Supabase."})
+    try:
+        if pg_conn is None:
+            return jsonify({"error": "PostgreSQL não conectado"}), 500
+
+        cur = pg_conn.cursor()
+        cur.execute("SELECT id, name, email, balance FROM users ORDER BY id")
+        rows = cur.fetchall()
+        cur.close()
+
+        users = [
+            {"id": r[0], "name": r[1], "email": r[2], "balance": str(r[3])}
+            for r in rows
+        ]
+        return jsonify(users)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/users", methods=["POST"])
 def create_user():
-    # DESCOMENTE QUANDO CONFIGURAR O POSTGRESQL
-    # try:
-    #     data = request.json
-    #     cur = pg_conn.cursor()
-    #     cur.execute(
-    #         "INSERT INTO users (name, email, balance) VALUES (%s, %s, %s) RETURNING id, name, email",
-    #         (data["name"], data["email"], data.get("balance", 0))
-    #     )
-    #     row = cur.fetchone()
-    #     pg_conn.commit()
-    #     cur.close()
-    #     return jsonify({"status": f"✅ Usuário '{row[1]}' salvo no PostgreSQL!"})
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-    return jsonify({"info": "⏳ PostgreSQL ainda não configurado. Cole a URL do Supabase."})
+    try:
+        if pg_conn is None:
+            return jsonify({"error": "PostgreSQL não conectado"}), 500
 
+        data = request.json
+        name = data.get("name")
+        email = data.get("email")
+        balance = data.get("balance", 0)
+
+        if not name or not email:
+            return jsonify({"error": "Informe name e email"}), 400
+
+        cur = pg_conn.cursor()
+        cur.execute(
+            "INSERT INTO users (name, email, balance) VALUES (%s, %s, %s) RETURNING id, name, email, balance",
+            (name, email, balance)
+        )
+        row = cur.fetchone()
+        pg_conn.commit()
+        cur.close()
+
+        return jsonify({
+            "status": f"✅ Usuário '{row[1]}' salvo no PostgreSQL!",
+            "user": {
+                "id": row[0],
+                "name": row[1],
+                "email": row[2],
+                "balance": str(row[3])
+            }
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # ============================================================
 # ROTAS - MONGODB (JOGOS) ⏳
 @app.route("/games", methods=["GET"])
