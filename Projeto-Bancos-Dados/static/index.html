@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GameHub - Persistência Poliglota</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: #fff;
+        }
+
+        .status-bar {
+            background: #1a1a2e;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #aaa;
+        }
+
+        .dot.online  { background: #00d1b2; }
+        .dot.offline { background: #ff3860; }
+
+        section {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .sec-neo4j    { border-left: 6px solid #00d1b2; }
+        .sec-postgres { border-left: 6px solid #336791; }
+        .sec-mongo    { border-left: 6px solid #47A248; }
+        .sec-redis    { border-left: 6px solid #D82C20; }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .badge-neo4j    { background: #00d1b2; color: #000; }
+        .badge-postgres { background: #336791; color: #fff; }
+        .badge-mongo    { background: #47A248; color: #fff; }
+        .badge-redis    { background: #D82C20; color: #fff; }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px 15px;
+            background: #0f0f1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #6200ee;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        .btn-neo4j    { background: #00d1b2; color: #000; }
+        .btn-postgres { background: #336791; color: #fff; }
+        .btn-mongo    { background: #47A248; color: #fff; }
+        .btn-redis    { background: #D82C20; color: #fff; }
+
+        .resultado {
+            margin-top: 10px;
+            background: #0f0f1a;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+            min-height: 45px;
+            border: 1px solid #222;
+            white-space: pre-wrap;
+        }
+
+        .sucesso { color: #00d1b2; }
+        .erro { color: #ff3860; }
+        .pendente { color: #aaa; font-style: italic; }
+
+        .muted {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <span style="font-size:2.5rem">🎮</span>
+        <h1>GameHub Cloud</h1>
+    </header>
+
+    <div class="status-bar">
+        <div class="dot" id="dot"></div>
+        <span id="status-text">Verificando conexão com o backend...</span>
+    </div>
+
+    <section class="sec-neo4j">
+        <h2>👥 Sistema de Amigos <span class="badge badge-neo4j">Neo4j (Grafos)</span></h2>
+
+        <div class="form-row">
+            <input id="f_user1" placeholder="Nome do Jogador 1" />
+            <input id="f_user2" placeholder="Nome do Jogador 2" />
+            <button class="btn-neo4j" onclick="criarAmizade()">Criar Amizade</button>
+        </div>
+
+        <div class="form-row">
+            <input id="busca_user" placeholder="Buscar amigos de..." />
+            <button class="btn-neo4j" onclick="buscarAmigos()">Buscar Amigos</button>
+            <button class="btn-neo4j" onclick="verNos()">Ver Todos os Nós</button>
+        </div>
+
+        <div class="resultado" id="res-neo4j">Aguardando...</div>
+    </section>
+
+    <section class="sec-postgres">
+        <h2>👤 Usuários <span class="badge badge-postgres">PostgreSQL</span></h2>
+
+        <div class="form-row">
+            <input id="u_name" placeholder="Nome" />
+            <input id="u_email" placeholder="Email" />
+            <button class="btn-postgres" onclick="salvarUsuario()">Salvar</button>
+        </div>
+
+        <div class="resultado" id="res-postgres">Aguardando...</div>
+    </section>
+
+    <section class="sec-mongo">
+        <h2>🕹️ Catálogo de Jogos <span class="badge badge-mongo">MongoDB</span></h2>
+
+        <div class="form-row">
+            <input id="g_title" placeholder="Título do Jogo" />
+            <input id="g_genre" placeholder="Gênero" />
+            <button class="btn-mongo" onclick="salvarJogo()">Adicionar</button>
+            <button class="btn-mongo" onclick="listarJogos()">Listar Jogos</button>
+        </div>
+
+        <div class="resultado" id="res-mongo">Aguardando...</div>
+    </section>
+
+    <section class="sec-redis">
+        <h2>🏆 Ranking Global <span class="badge badge-redis">Redis</span></h2>
+
+        <div class="form-row">
+            <input id="r_user" placeholder="Jogador" disabled />
+            <input id="r_score" type="number" placeholder="Pontos" disabled />
+            <button class="btn-redis" onclick="salvarRanking()" disabled>Enviar Score</button>
+        </div>
+
+        <div class="resultado" id="res-redis">
+            <span class="pendente">⏳ Redis ainda não foi configurado.</span>
+        </div>
+    </section>
+</div>
+
+<script>
+    const API = "";
+
+    function setHtml(id, content) {
+        document.getElementById(id).innerHTML = content;
+    }
+
+    async function checkStatus() {
+        try {
+            const res = await fetch(`${API}/`);
+            const data = await res.json();
+
+            const dot = document.getElementById("dot");
+            const txt = document.getElementById("status-text");
+
+            dot.className = "dot online";
+            txt.textContent = `✅ Backend Online | Neo4j: ${data.neo4j} | Postgres: ${data.postgres} | MongoDB: ${data.mongodb} | Redis: ${data.redis}`;
+        } catch (e) {
+            document.getElementById("dot").className = "dot offline";
+            document.getElementById("status-text").textContent =
+                "❌ Backend Offline — rode: python3 Projeto-Bancos-Dados/app.py";
+        }
+    }
+
+    async function criarAmizade() {
+        const user1 = document.getElementById("f_user1").value.trim();
+        const user2 = document.getElementById("f_user2").value.trim();
+
+        if (!user1 || !user2) {
+            setHtml("res-neo4j", '<span class="erro">⚠️ Preencha os dois nomes.</span>');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/friends`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user1, user2 })
+            });
+
+            const data = await res.json();
+
+            setHtml(
+                "res-neo4j",
+                data.status
+                    ? `<span class="sucesso">${data.status}</span>`
+                    : `<span class="erro">❌ ${data.error || "Erro ao criar amizade."}</span>`
+            );
+        } catch {
+            setHtml("res-neo4j", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function buscarAmigos() {
+        const username = document.getElementById("busca_user").value.trim();
+
+        if (!username) {
+            setHtml("res-neo4j", '<span class="erro">⚠️ Digite um nome.</span>');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/friends/${encodeURIComponent(username)}`);
+            const data = await res.json();
+
+            if (data.friends && data.friends.length > 0) {
+                setHtml(
+                    "res-neo4j",
+                    `<span class="sucesso">Amigos de ${data.user}:\n${data.friends.map(f => "• " + f).join("\n")}</span>`
+                );
+            } else {
+                setHtml("res-neo4j", `<span class="erro">Nenhum amigo encontrado para "${username}".</span>`);
+            }
+        } catch {
+            setHtml("res-neo4j", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function verNos() {
+        try {
+            const res = await fetch(`${API}/nodes`);
+            const data = await res.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+                setHtml(
+                    "res-neo4j",
+                    `<span class="sucesso">${data.map(n => `• ${n.name} [${Array.isArray(n.tipo) ? n.tipo.join(", ") : n.tipo}]`).join("\n")}</span>`
+                );
+            } else {
+                setHtml("res-neo4j", '<span class="erro">Nenhum nó encontrado. Crie uma amizade primeiro.</span>');
+            }
+        } catch {
+            setHtml("res-neo4j", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function salvarUsuario() {
+        const name = document.getElementById("u_name").value.trim();
+        const email = document.getElementById("u_email").value.trim();
+
+        if (!name || !email) {
+            setHtml("res-postgres", '<span class="erro">⚠️ Preencha nome e email.</span>');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/users`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, balance: 0 })
+            });
+
+            const data = await res.json();
+
+            setHtml(
+                "res-postgres",
+                data.status
+                    ? `<span class="sucesso">${data.status}</span>`
+                    : `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar usuário."}</span>`
+            );
+
+            if (data.status) {
+                document.getElementById("u_name").value = "";
+                document.getElementById("u_email").value = "";
+            }
+        } catch {
+            setHtml("res-postgres", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function salvarJogo() {
+        const title = document.getElementById("g_title").value.trim();
+        const genre = document.getElementById("g_genre").value.trim();
+
+        if (!title || !genre) {
+            setHtml("res-mongo", '<span class="erro">⚠️ Preencha título e gênero.</span>');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/games`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, genre })
+            });
+
+            const data = await res.json();
+
+            setHtml(
+                "res-mongo",
+                data.status
+                    ? `<span class="sucesso">${data.status}</span>`
+                    : `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar jogo."}</span>`
+            );
+
+            if (data.status) {
+                document.getElementById("g_title").value = "";
+                document.getElementById("g_genre").value = "";
+            }
+        } catch {
+            setHtml("res-mongo", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function listarJogos() {
+        try {
+            const res = await fetch(`${API}/games`);
+            const data = await res.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+                setHtml(
+                    "res-mongo",
+                    `<span class="sucesso">${data.map(g => `• ${g.title} (${g.genre})`).join("\n")}</span>`
+                );
+            } else if (data.info) {
+                setHtml("res-mongo", `<span class="erro">${data.info}</span>`);
+            } else {
+                setHtml("res-mongo", '<span class="erro">Nenhum jogo cadastrado.</span>');
+            }
+        } catch {
+            setHtml("res-mongo", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function salvarRanking() {
+        setHtml("res-redis", '<span class="pendente">⏳ Redis ainda não foi configurado.</span>');
+    }
+
+    checkStatus();
+</script>
+</body>
+</html>

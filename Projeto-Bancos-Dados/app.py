@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import base64
 from pymongo import MongoClient
@@ -10,16 +10,9 @@ load_dotenv()
 
 POSTGRES_URL = os.getenv("POSTGRES_URL")
 
-
-# ============================================================
-# DESCOMENTE E INSTALE QUANDO FOR ADICIONAR OS OUTROS BANCOS:
-# pip install psycopg2-binary pymongo redis
-# ============================================================
 import psycopg2
-# from pymongo import MongoClient
-# import redis
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 CORS(app)
 
 # ============================================================
@@ -132,7 +125,10 @@ def home():
 # ============================================================
 # ROTAS - NEO4J (AMIGOS) ✅
 # ============================================================
-
+@app.route("/app")
+def frontend():
+    return send_from_directory("static", "index.html")
+    
 @app.route("/friends", methods=["POST"])
 def add_friend():
     try:
