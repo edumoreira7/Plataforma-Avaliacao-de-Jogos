@@ -2,6 +2,11 @@ import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import base64
+from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # ============================================================
 # DESCOMENTE E INSTALE QUANDO FOR ADICIONAR OS OUTROS BANCOS:
@@ -65,17 +70,21 @@ except Exception as e:
 #     pg_conn = None
 
 # ============================================================
-# ⏳ MONGODB (ATLAS) - PREENCHER DEPOIS
+# ✅ MONGODB (ATLAS)
 # ============================================================
-# MONGO_URL = "mongodb+srv://USUARIO:SENHA@cluster.mongodb.net/gamehub"
-#
-# try:
-#     mongo_client = MongoClient(MONGO_URL)
-#     mongo_db = mongo_client["gamehub"]
-#     print("✅ MongoDB conectado com sucesso!")
-# except Exception as e:
-#     print(f"❌ MongoDB erro: {e}")
-#     mongo_db = None
+MONGO_URL = os.getenv("MONGO_URL")
+
+try:
+    mongo_client = MongoClient(MONGO_URL)
+    mongo_db = mongo_client["gamehub"]
+
+    # testa a conexão
+    mongo_client.admin.command("ping")
+
+    print("✅ MongoDB conectado com sucesso!")
+except Exception as e:
+    print(f"❌ MongoDB erro: {e}")
+    mongo_db = None
 
 # ============================================================
 # ⏳ REDIS (UPSTASH) - PREENCHER DEPOIS
@@ -101,12 +110,15 @@ def home():
         neo4j_status = "✅ Conectado" if not test.get("errors") else "❌ Erro"
     except:
         neo4j_status = "❌ Desconectado"
+
+    mongodb_status = "✅ Conectado" if mongo_db is not None else "❌ Desconectado"
+
     return jsonify({
         "backend": "GameHub Online",
-        "neo4j":    neo4j_status,
+        "neo4j": neo4j_status,
         "postgres": "⏳ Pendente - Supabase",
-        "mongodb":  "⏳ Pendente - Atlas",
-        "redis":    "⏳ Pendente - Upstash"
+        "mongodb": mongodb_status,
+        "redis": "⏳ Pendente - Upstash"
     })
 
 # ============================================================
@@ -197,28 +209,42 @@ def create_user():
 
 # ============================================================
 # ROTAS - MONGODB (JOGOS) ⏳
-# ============================================================
-
 @app.route("/games", methods=["GET"])
 def get_games():
-    # DESCOMENTE QUANDO CONFIGURAR O MONGODB
-    # try:
-    #     games = list(mongo_db.games.find({}, {"_id": 0}))
-    #     return jsonify(games)
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-    return jsonify({"info": "⏳ MongoDB ainda não configurado. Cole a URL do Atlas."})
+    try:
+        if mongo_db is None:
+            return jsonify({"error": "MongoDB não conectado"}), 500
+
+        games = list(mongo_db.games.find({}, {"_id": 0}))
+        return jsonify(games)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/games", methods=["POST"])
 def create_game():
-    # DESCOMENTE QUANDO CONFIGURAR O MONGODB
-    # try:
-    #     data = request.json
-    #     mongo_db.games.insert_one(data)
-    #     return jsonify({"status": f"✅ Jogo '{data.get('title')}' salvo no MongoDB!"})
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-    return jsonify({"info": "⏳ MongoDB ainda não configurado. Cole a URL do Atlas."})
+    try:
+        if mongo_db is None:
+            return jsonify({"error": "MongoDB não conectado"}), 500
+
+        data = request.json
+
+        title = data.get("title")
+        genre = data.get("genre")
+
+        if not title or not genre:
+            return jsonify({"error": "Informe title e genre"}), 400
+
+        game = {
+            "title": title,
+            "genre": genre
+        }
+
+        mongo_db.games.insert_one(game)
+
+        return jsonify({"status": f"✅ Jogo '{title}' salvo no MongoDB!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+# ===========================================================e a URL do Atlas."})
 
 # ============================================================
 # ROTAS - REDIS (RANKING) ⏳

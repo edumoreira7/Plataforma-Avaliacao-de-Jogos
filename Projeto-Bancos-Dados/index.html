@@ -226,7 +226,32 @@
     }
 
     async function salvarUsuario() { /* Ativar após configurar PostgreSQL */ }
-    async function salvarJogo()    { /* Ativar após configurar MongoDB    */ }
+    async function salvarJogo() {
+        const title = document.getElementById("g_title").value.trim();
+        const genre = document.getElementById("g_genre").value.trim();
+        const div   = document.getElementById("res-mongo");
+
+        if (!title || !genre) {
+            div.innerHTML = '<span class="erro">⚠️ Preencha título e gênero!</span>';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/games`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ title, genre })
+            });
+
+            const data = await res.json();
+
+            div.innerHTML = data.status
+                ? `<span class="sucesso">${data.status}</span>`
+                : `<span class="erro">❌ ${data.error || data.info}</span>`;
+        } catch (e) {
+            div.innerHTML = '<span class="erro">❌ Erro ao conectar no backend!</span>';
+        }
+    }
     async function salvarRanking() { /* Ativar após configurar Redis       */ }
 
     checkStatus();
