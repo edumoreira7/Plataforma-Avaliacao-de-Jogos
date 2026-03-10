@@ -3,158 +3,239 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GameHub - Persistência Poliglota</title>
+    <title>GameHub Cloud - Persistência Poliglota</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0b1020;
+            --panel: #151c32;
+            --panel-2: #0f1528;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --border: #26314f;
+            --neo4j: #00d1b2;
+            --postgres: #336791;
+            --mongo: #47A248;
+            --redis: #D82C20;
+            --danger: #ff5d73;
+            --shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+        }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0f0f1a;
-            color: #e0e0e0;
-            padding: 40px 20px;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(180deg, #0b1020 0%, #11182d 100%);
+            color: var(--text);
+            padding: 32px 16px;
         }
 
         .container {
-            max-width: 900px;
-            margin: auto;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: #18213b;
+            font-size: 1.8rem;
+            box-shadow: var(--shadow);
         }
 
         header h1 {
-            font-size: 2.2rem;
-            color: #fff;
+            font-size: 2rem;
+            color: white;
+        }
+
+        header p {
+            color: var(--muted);
+            margin-top: 4px;
         }
 
         .status-bar {
-            background: #1a1a2e;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            padding: 16px 18px;
+            border-radius: 14px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            box-shadow: var(--shadow);
         }
 
         .dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #aaa;
+            background: #9ca3af;
+            flex-shrink: 0;
         }
 
-        .dot.online  { background: #00d1b2; }
-        .dot.offline { background: #ff3860; }
+        .dot.online { background: #10b981; }
+        .dot.offline { background: var(--danger); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
 
         section {
-            background: #1a1a2e;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: var(--shadow);
         }
 
-        .sec-neo4j    { border-left: 6px solid #00d1b2; }
-        .sec-postgres { border-left: 6px solid #336791; }
-        .sec-mongo    { border-left: 6px solid #47A248; }
-        .sec-redis    { border-left: 6px solid #D82C20; }
+        .sec-neo4j { border-left: 6px solid var(--neo4j); }
+        .sec-postgres { border-left: 6px solid var(--postgres); }
+        .sec-mongo { border-left: 6px solid var(--mongo); }
+        .sec-redis { border-left: 6px solid var(--redis); }
 
         h2 {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
-            font-size: 1.3rem;
+            margin-bottom: 18px;
+            font-size: 1.2rem;
         }
 
         .badge {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.7em;
-            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
         }
 
-        .badge-neo4j    { background: #00d1b2; color: #000; }
-        .badge-postgres { background: #336791; color: #fff; }
-        .badge-mongo    { background: #47A248; color: #fff; }
-        .badge-redis    { background: #D82C20; color: #fff; }
+        .badge-neo4j { background: rgba(0, 209, 178, 0.18); color: #7cf7e6; }
+        .badge-postgres { background: rgba(51, 103, 145, 0.22); color: #90b9df; }
+        .badge-mongo { background: rgba(71, 162, 72, 0.22); color: #9de49e; }
+        .badge-redis { background: rgba(216, 44, 32, 0.18); color: #ff9b94; }
 
         .form-row {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         input {
             flex: 1;
             min-width: 180px;
-            padding: 12px 15px;
-            background: #0f0f1a;
-            border: 1px solid #333;
-            border-radius: 8px;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.98rem;
             outline: none;
         }
 
         input:focus {
-            border-color: #6200ee;
+            border-color: #6366f1;
+        }
+
+        input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         button {
-            padding: 12px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: 0.3s;
+            transition: 0.2s ease;
+            font-size: 0.95rem;
         }
 
         button:hover {
-            opacity: 0.85;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+            opacity: 0.9;
         }
 
-        .btn-neo4j    { background: #00d1b2; color: #000; }
-        .btn-postgres { background: #336791; color: #fff; }
-        .btn-mongo    { background: #47A248; color: #fff; }
-        .btn-redis    { background: #D82C20; color: #fff; }
+        button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-neo4j { background: var(--neo4j); color: #032b24; }
+        .btn-postgres { background: var(--postgres); color: white; }
+        .btn-mongo { background: var(--mongo); color: white; }
+        .btn-redis { background: var(--redis); color: white; }
+        .btn-secondary {
+            background: #273352;
+            color: #dbe4ff;
+        }
 
         .resultado {
             margin-top: 10px;
-            background: #0f0f1a;
-            border-radius: 8px;
-            padding: 12px 15px;
-            font-size: 0.95rem;
-            min-height: 45px;
-            border: 1px solid #222;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            min-height: 56px;
             white-space: pre-wrap;
+            line-height: 1.5;
+            color: var(--text);
         }
 
-        .sucesso { color: #00d1b2; }
-        .erro { color: #ff3860; }
-        .pendente { color: #aaa; font-style: italic; }
+        .sucesso { color: #57f0d2; }
+        .erro { color: #ff8897; }
+        .pendente { color: var(--muted); font-style: italic; }
 
-        .muted {
-            color: #9ca3af;
+        .helper {
+            color: var(--muted);
             font-size: 0.9rem;
-            margin-top: 8px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            header h1 {
+                font-size: 1.6rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            input, button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-
     <header>
-        <span style="font-size:2.5rem">🎮</span>
-        <h1>GameHub Cloud</h1>
+        <div class="logo">🎮</div>
+        <div>
+            <h1>GameHub Cloud</h1>
+            <p>Painel de persistência poliglota do projeto</p>
+        </div>
     </header>
 
     <div class="status-bar">
@@ -162,62 +243,73 @@
         <span id="status-text">Verificando conexão com o backend...</span>
     </div>
 
-    <section class="sec-neo4j">
-        <h2>👥 Sistema de Amigos <span class="badge badge-neo4j">Neo4j (Grafos)</span></h2>
+    <div class="grid">
+        <section class="sec-neo4j">
+            <h2>👥 Sistema de Amigos <span class="badge badge-neo4j">Neo4j (Grafos)</span></h2>
+            <p class="helper">Crie amizades entre jogadores e consulte conexões já cadastradas.</p>
 
-        <div class="form-row">
-            <input id="f_user1" placeholder="Nome do Jogador 1" />
-            <input id="f_user2" placeholder="Nome do Jogador 2" />
-            <button class="btn-neo4j" onclick="criarAmizade()">Criar Amizade</button>
-        </div>
+            <div class="form-row">
+                <input id="f_user1" placeholder="Nome do Jogador 1" />
+                <input id="f_user2" placeholder="Nome do Jogador 2" />
+                <button class="btn-neo4j" onclick="criarAmizade()">Criar Amizade</button>
+            </div>
 
-        <div class="form-row">
-            <input id="busca_user" placeholder="Buscar amigos de..." />
-            <button class="btn-neo4j" onclick="buscarAmigos()">Buscar Amigos</button>
-            <button class="btn-neo4j" onclick="verNos()">Ver Todos os Nós</button>
-        </div>
+            <div class="form-row">
+                <input id="busca_user" placeholder="Buscar amigos de..." />
+                <button class="btn-neo4j" onclick="buscarAmigos()">Buscar Amigos</button>
+                <button class="btn-neo4j" onclick="verNos()">Ver Todos os Nós</button>
+                <button class="btn-secondary" onclick="limparResultado('res-neo4j')">Limpar</button>
+            </div>
 
-        <div class="resultado" id="res-neo4j">Aguardando...</div>
-    </section>
+            <div class="resultado" id="res-neo4j">Aguardando...</div>
+        </section>
 
-    <section class="sec-postgres">
-        <h2>👤 Usuários <span class="badge badge-postgres">PostgreSQL</span></h2>
+        <section class="sec-postgres">
+            <h2>👤 Usuários <span class="badge badge-postgres">PostgreSQL</span></h2>
+            <p class="helper">Cadastre usuários e consulte os registros salvos no banco relacional.</p>
 
-        <div class="form-row">
-            <input id="u_name" placeholder="Nome" />
-            <input id="u_email" placeholder="Email" />
-            <button class="btn-postgres" onclick="salvarUsuario()">Salvar</button>
-        </div>
+            <div class="form-row">
+                <input id="u_name" placeholder="Nome" />
+                <input id="u_email" placeholder="Email" />
+                <button class="btn-postgres" onclick="salvarUsuario()">Salvar</button>
+                <button class="btn-postgres" onclick="listarUsuarios()">Listar Usuários</button>
+                <button class="btn-secondary" onclick="limparResultado('res-postgres')">Limpar</button>
+            </div>
 
-        <div class="resultado" id="res-postgres">Aguardando...</div>
-    </section>
+            <div class="resultado" id="res-postgres">Aguardando...</div>
+        </section>
 
-    <section class="sec-mongo">
-        <h2>🕹️ Catálogo de Jogos <span class="badge badge-mongo">MongoDB</span></h2>
+        <section class="sec-mongo">
+            <h2>🕹️ Catálogo de Jogos <span class="badge badge-mongo">MongoDB</span></h2>
+            <p class="helper">Cadastre jogos e visualize o catálogo armazenado em documentos.</p>
 
-        <div class="form-row">
-            <input id="g_title" placeholder="Título do Jogo" />
-            <input id="g_genre" placeholder="Gênero" />
-            <button class="btn-mongo" onclick="salvarJogo()">Adicionar</button>
-            <button class="btn-mongo" onclick="listarJogos()">Listar Jogos</button>
-        </div>
+            <div class="form-row">
+                <input id="g_title" placeholder="Título do Jogo" />
+                <input id="g_genre" placeholder="Gênero" />
+                <button class="btn-mongo" onclick="salvarJogo()">Adicionar</button>
+                <button class="btn-mongo" onclick="listarJogos()">Listar Jogos</button>
+                <button class="btn-secondary" onclick="limparResultado('res-mongo')">Limpar</button>
+            </div>
 
-        <div class="resultado" id="res-mongo">Aguardando...</div>
-    </section>
+            <div class="resultado" id="res-mongo">Aguardando...</div>
+        </section>
 
-    <section class="sec-redis">
-        <h2>🏆 Ranking Global <span class="badge badge-redis">Redis</span></h2>
+        <section class="sec-redis">
+            <h2>🏆 Ranking Global <span class="badge badge-redis">Redis</span></h2>
+            <p class="helper">Área reservada para o ranking global quando o Redis for configurado.</p>
 
-        <div class="form-row">
-            <input id="r_user" placeholder="Jogador" disabled />
-            <input id="r_score" type="number" placeholder="Pontos" disabled />
-            <button class="btn-redis" onclick="salvarRanking()" disabled>Enviar Score</button>
-        </div>
+            <div class="form-row">
+                <input id="r_user" placeholder="Jogador" disabled />
+                <input id="r_score" type="number" placeholder="Pontos" disabled />
+                <button class="btn-redis" onclick="salvarRanking()" disabled>Enviar Score</button>
+                <button class="btn-secondary" onclick="limparResultado('res-redis')">Limpar</button>
+            </div>
 
-        <div class="resultado" id="res-redis">
-            <span class="pendente">⏳ Redis ainda não foi configurado.</span>
-        </div>
-    </section>
+            <div class="resultado" id="res-redis">
+                <span class="pendente">⏳ Redis ainda não foi configurado.</span>
+            </div>
+        </section>
+    </div>
 </div>
 
 <script>
@@ -227,20 +319,37 @@
         document.getElementById(id).innerHTML = content;
     }
 
+    function limparResultado(id) {
+        setHtml(id, "Aguardando...");
+    }
+
+    function limparCampos(...ids) {
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+    }
+
+    async function parseResponse(res) {
+        try {
+            return await res.json();
+        } catch {
+            return { error: "Resposta inválida do servidor." };
+        }
+    }
+
     async function checkStatus() {
         try {
             const res = await fetch(`${API}/`);
-            const data = await res.json();
+            const data = await parseResponse(res);
 
-            const dot = document.getElementById("dot");
-            const txt = document.getElementById("status-text");
-
-            dot.className = "dot online";
-            txt.textContent = `✅ Backend Online | Neo4j: ${data.neo4j} | Postgres: ${data.postgres} | MongoDB: ${data.mongodb} | Redis: ${data.redis}`;
-        } catch (e) {
+            document.getElementById("dot").className = "dot online";
+            document.getElementById("status-text").textContent =
+                `✅ Backend Online | Neo4j: ${data.neo4j} | Postgres: ${data.postgres} | MongoDB: ${data.mongodb} | Redis: ${data.redis}`;
+        } catch {
             document.getElementById("dot").className = "dot offline";
             document.getElementById("status-text").textContent =
-                "❌ Backend Offline — rode: python3 Projeto-Bancos-Dados/app.py";
+                "❌ Backend Offline — rode o app.py para iniciar o sistema.";
         }
     }
 
@@ -260,7 +369,7 @@
                 body: JSON.stringify({ user1, user2 })
             });
 
-            const data = await res.json();
+            const data = await parseResponse(res);
 
             setHtml(
                 "res-neo4j",
@@ -268,6 +377,8 @@
                     ? `<span class="sucesso">${data.status}</span>`
                     : `<span class="erro">❌ ${data.error || "Erro ao criar amizade."}</span>`
             );
+
+            if (data.status) limparCampos("f_user1", "f_user2");
         } catch {
             setHtml("res-neo4j", '<span class="erro">❌ Erro ao conectar no backend.</span>');
         }
@@ -283,12 +394,12 @@
 
         try {
             const res = await fetch(`${API}/friends/${encodeURIComponent(username)}`);
-            const data = await res.json();
+            const data = await parseResponse(res);
 
             if (data.friends && data.friends.length > 0) {
                 setHtml(
                     "res-neo4j",
-                    `<span class="sucesso">Amigos de ${data.user}:\n${data.friends.map(f => "• " + f).join("\n")}</span>`
+                    `<span class="sucesso">Amigos de ${data.user}:\n${data.friends.map(f => `• ${f}`).join("\n")}</span>`
                 );
             } else {
                 setHtml("res-neo4j", `<span class="erro">Nenhum amigo encontrado para "${username}".</span>`);
@@ -301,7 +412,7 @@
     async function verNos() {
         try {
             const res = await fetch(`${API}/nodes`);
-            const data = await res.json();
+            const data = await parseResponse(res);
 
             if (Array.isArray(data) && data.length > 0) {
                 setHtml(
@@ -332,7 +443,7 @@
                 body: JSON.stringify({ name, email, balance: 0 })
             });
 
-            const data = await res.json();
+            const data = await parseResponse(res);
 
             setHtml(
                 "res-postgres",
@@ -341,9 +452,26 @@
                     : `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar usuário."}</span>`
             );
 
-            if (data.status) {
-                document.getElementById("u_name").value = "";
-                document.getElementById("u_email").value = "";
+            if (data.status) limparCampos("u_name", "u_email");
+        } catch {
+            setHtml("res-postgres", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function listarUsuarios() {
+        try {
+            const res = await fetch(`${API}/users`);
+            const data = await parseResponse(res);
+
+            if (Array.isArray(data) && data.length > 0) {
+                setHtml(
+                    "res-postgres",
+                    `<span class="sucesso">${data.map(u => `• ${u.name} | ${u.email} | saldo: ${u.balance}`).join("\n")}</span>`
+                );
+            } else if (data.error || data.info) {
+                setHtml("res-postgres", `<span class="erro">❌ ${data.error || data.info}</span>`);
+            } else {
+                setHtml("res-postgres", '<span class="erro">Nenhum usuário cadastrado.</span>');
             }
         } catch {
             setHtml("res-postgres", '<span class="erro">❌ Erro ao conectar no backend.</span>');
@@ -366,7 +494,7 @@
                 body: JSON.stringify({ title, genre })
             });
 
-            const data = await res.json();
+            const data = await parseResponse(res);
 
             setHtml(
                 "res-mongo",
@@ -375,10 +503,7 @@
                     : `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar jogo."}</span>`
             );
 
-            if (data.status) {
-                document.getElementById("g_title").value = "";
-                document.getElementById("g_genre").value = "";
-            }
+            if (data.status) limparCampos("g_title", "g_genre");
         } catch {
             setHtml("res-mongo", '<span class="erro">❌ Erro ao conectar no backend.</span>');
         }
@@ -386,27 +511,41 @@
 
     async function listarJogos() {
         try {
-            const res = await fetch(`${API}/games`);
+            const res = await fetch("/games");
             const data = await res.json();
 
             if (Array.isArray(data) && data.length > 0) {
-                setHtml(
-                    "res-mongo",
-                    `<span class="sucesso">${data.map(g => `• ${g.title} (${g.genre})`).join("\n")}</span>`
-                );
-            } else if (data.info) {
-                setHtml("res-mongo", `<span class="erro">${data.info}</span>`);
+                document.getElementById("res-mongo").innerHTML =
+                    data.map(j => `• ${j.title} (${j.genre})`).join("<br>");
             } else {
-                setHtml("res-mongo", '<span class="erro">Nenhum jogo cadastrado.</span>');
+                document.getElementById("res-mongo").innerHTML =
+                    "Nenhum jogo cadastrado.";
             }
-        } catch {
-            setHtml("res-mongo", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        } catch (e) {
+            document.getElementById("res-mongo").innerHTML =
+                "Erro ao buscar jogos.";
         }
     }
 
-    async function salvarRanking() {
+    function salvarRanking() {
         setHtml("res-redis", '<span class="pendente">⏳ Redis ainda não foi configurado.</span>');
     }
+
+    function bindEnter(inputId, action) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") action();
+        });
+    }
+
+    bindEnter("f_user1", criarAmizade);
+    bindEnter("f_user2", criarAmizade);
+    bindEnter("busca_user", buscarAmigos);
+    bindEnter("u_name", salvarUsuario);
+    bindEnter("u_email", salvarUsuario);
+    bindEnter("g_title", salvarJogo);
+    bindEnter("g_genre", salvarJogo);
 
     checkStatus();
 </script>
