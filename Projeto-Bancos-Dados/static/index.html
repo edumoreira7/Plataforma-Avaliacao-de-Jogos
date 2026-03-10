@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GameHub Cloud - Persistência Poliglota</title>
+    <title>GameHub Cloud</title>
     <style>
         * {
             box-sizing: border-box;
@@ -18,6 +18,7 @@
             --text: #e5e7eb;
             --muted: #94a3b8;
             --border: #26314f;
+            --primary: #6d5dfc;
             --neo4j: #00d1b2;
             --postgres: #336791;
             --mongo: #47A248;
@@ -34,20 +35,28 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1150px;
             margin: 0 auto;
         }
 
         header {
             display: flex;
             align-items: center;
-            gap: 14px;
+            justify-content: space-between;
+            gap: 16px;
             margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
         .logo {
-            width: 54px;
-            height: 54px;
+            width: 56px;
+            height: 56px;
             display: grid;
             place-items: center;
             border-radius: 16px;
@@ -58,7 +67,7 @@
 
         header h1 {
             font-size: 2rem;
-            color: white;
+            color: #fff;
         }
 
         header p {
@@ -89,50 +98,97 @@
         .dot.online { background: #10b981; }
         .dot.offline { background: var(--danger); }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 18px;
+        .hero {
+            background: linear-gradient(135deg, #1b2550 0%, #10182f 100%);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        section {
+        .hero h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: var(--muted);
+            max-width: 650px;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #273352;
+            color: #dbe4ff;
+        }
+
+        .btn-neo4j { background: var(--neo4j); color: #032b24; }
+        .btn-postgres { background: var(--postgres); color: white; }
+        .btn-mongo { background: var(--mongo); color: white; }
+        .btn-redis { background: var(--redis); color: white; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
             background: var(--panel);
             border: 1px solid var(--border);
-            border-radius: 18px;
+            border-radius: 20px;
             padding: 22px;
             box-shadow: var(--shadow);
         }
 
-        .sec-neo4j { border-left: 6px solid var(--neo4j); }
-        .sec-postgres { border-left: 6px solid var(--postgres); }
-        .sec-mongo { border-left: 6px solid var(--mongo); }
-        .sec-redis { border-left: 6px solid var(--redis); }
+        .panel h3 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
 
-        h2 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .panel p.sub {
+            color: var(--muted);
             margin-bottom: 18px;
-            font-size: 1.2rem;
         }
-
-        .badge {
-            padding: 5px 10px;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 700;
-        }
-
-        .badge-neo4j { background: rgba(0, 209, 178, 0.18); color: #7cf7e6; }
-        .badge-postgres { background: rgba(51, 103, 145, 0.22); color: #90b9df; }
-        .badge-mongo { background: rgba(71, 162, 72, 0.22); color: #9de49e; }
-        .badge-redis { background: rgba(216, 44, 32, 0.18); color: #ff9b94; }
 
         .form-row {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         input {
@@ -148,42 +204,7 @@
         }
 
         input:focus {
-            border-color: #6366f1;
-        }
-
-        input:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        button {
-            border: none;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s ease;
-            font-size: 0.95rem;
-        }
-
-        button:hover {
-            transform: translateY(-1px);
-            opacity: 0.9;
-        }
-
-        button:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-neo4j { background: var(--neo4j); color: #032b24; }
-        .btn-postgres { background: var(--postgres); color: white; }
-        .btn-mongo { background: var(--mongo); color: white; }
-        .btn-redis { background: var(--redis); color: white; }
-        .btn-secondary {
-            background: #273352;
-            color: #dbe4ff;
+            border-color: var(--primary);
         }
 
         .resultado {
@@ -195,34 +216,133 @@
             min-height: 56px;
             white-space: pre-wrap;
             line-height: 1.5;
-            color: var(--text);
         }
 
         .sucesso { color: #57f0d2; }
         .erro { color: #ff8897; }
         .pendente { color: var(--muted); font-style: italic; }
 
-        .helper {
-            color: var(--muted);
-            font-size: 0.9rem;
-            margin-top: 4px;
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .game-card {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .game-banner {
+            height: 110px;
+            background: linear-gradient(135deg, #2f3f77, #1c2441);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .game-content {
+            padding: 14px;
+        }
+
+        .game-content h4 {
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            background: rgba(71, 162, 72, 0.18);
+            color: #9de49e;
             margin-bottom: 12px;
         }
 
-        @media (max-width: 700px) {
-            body {
-                padding: 20px 12px;
+        .game-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .friend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .friend-card {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .friend-info strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .friend-info span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .quick-card {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .quick-card strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1.1rem;
+        }
+
+        .quick-card span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
             }
 
-            header h1 {
-                font-size: 1.6rem;
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .hero h2 {
+                font-size: 1.5rem;
             }
 
             .form-row {
                 flex-direction: column;
             }
 
-            input, button {
+            input, .btn {
                 width: 100%;
             }
         }
@@ -231,10 +351,12 @@
 <body>
 <div class="container">
     <header>
-        <div class="logo">🎮</div>
-        <div>
-            <h1>GameHub Cloud</h1>
-            <p>Painel de persistência poliglota do projeto</p>
+        <div class="brand">
+            <div class="logo">🎮</div>
+            <div>
+                <h1>GameHub Cloud</h1>
+                <p>Plataforma de jogos com persistência poliglota</p>
+            </div>
         </div>
     </header>
 
@@ -243,71 +365,117 @@
         <span id="status-text">Verificando conexão com o backend...</span>
     </div>
 
-    <div class="grid">
-        <section class="sec-neo4j">
-            <h2>👥 Sistema de Amigos <span class="badge badge-neo4j">Neo4j (Grafos)</span></h2>
-            <p class="helper">Crie amizades entre jogadores e consulte conexões já cadastradas.</p>
+    <section class="hero">
+        <div>
+            <h2>Descubra jogos, conecte-se e monte sua rede</h2>
+            <p>
+                Esta é a home do projeto GameHub Cloud. Aqui você pode cadastrar jogos no MongoDB,
+                visualizar o catálogo salvo, cadastrar usuários no PostgreSQL e simular sugestões
+                de amizades com base na ideia de relacionamentos em grafos.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary" onclick="listarJogos()">Ver catálogo de jogos</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('jogos').scrollIntoView({behavior: 'smooth'})">Ir para jogos</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="quick-grid">
+        <div class="quick-card">
+            <strong id="count-jogos">0</strong>
+            <span>Jogos no catálogo</span>
+        </div>
+        <div class="quick-card">
+            <strong>Neo4j</strong>
+            <span>Amizades e conexões entre jogadores</span>
+        </div>
+        <div class="quick-card">
+            <strong>PostgreSQL</strong>
+            <span>Usuários cadastrados na plataforma</span>
+        </div>
+    </div>
+
+    <div class="grid" style="margin-top: 22px;">
+        <section class="panel" id="jogos">
+            <h3>🕹️ Catálogo de Jogos</h3>
+            <p class="sub">Os jogos abaixo são puxados do MongoDB. Cada card já tem um botão de avaliar para a próxima etapa.</p>
 
             <div class="form-row">
-                <input id="f_user1" placeholder="Nome do Jogador 1" />
-                <input id="f_user2" placeholder="Nome do Jogador 2" />
-                <button class="btn-neo4j" onclick="criarAmizade()">Criar Amizade</button>
+                <input id="g_title" placeholder="Título do jogo" />
+                <input id="g_genre" placeholder="Gênero" />
+                <button class="btn btn-mongo" onclick="salvarJogo()">Adicionar</button>
+                <button class="btn btn-secondary" onclick="listarJogos()">Atualizar lista</button>
             </div>
 
-            <div class="form-row">
-                <input id="busca_user" placeholder="Buscar amigos de..." />
-                <button class="btn-neo4j" onclick="buscarAmigos()">Buscar Amigos</button>
-                <button class="btn-neo4j" onclick="verNos()">Ver Todos os Nós</button>
-                <button class="btn-secondary" onclick="limparResultado('res-neo4j')">Limpar</button>
-            </div>
+            <div class="resultado" id="res-mongo">Carregando jogos...</div>
 
-            <div class="resultado" id="res-neo4j">Aguardando...</div>
+            <div class="games-grid" id="games-grid"></div>
         </section>
 
-        <section class="sec-postgres">
-            <h2>👤 Usuários <span class="badge badge-postgres">PostgreSQL</span></h2>
-            <p class="helper">Cadastre usuários e consulte os registros salvos no banco relacional.</p>
+        <section class="panel">
+            <h3>🤝 Sugestões de amizades</h3>
+            <p class="sub">Exemplo visual de sugestões. Pode virar funcional depois usando Neo4j.</p>
+
+            <div class="friend-list">
+                <div class="friend-card">
+                    <div class="friend-info">
+                        <strong>Ana Paula</strong>
+                        <span>Joga Valorant, CS e Fortnite</span>
+                    </div>
+                    <button class="btn btn-neo4j">Adicionar</button>
+                </div>
+
+                <div class="friend-card">
+                    <div class="friend-info">
+                        <strong>Lucas Santos</strong>
+                        <span>Curte FIFA, Rocket League e eFootball</span>
+                    </div>
+                    <button class="btn btn-neo4j">Adicionar</button>
+                </div>
+
+                <div class="friend-card">
+                    <div class="friend-info">
+                        <strong>Marina Costa</strong>
+                        <span>Prefere Minecraft, The Sims e Stardew Valley</span>
+                    </div>
+                    <button class="btn btn-neo4j">Adicionar</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="grid" style="margin-top: 20px;">
+        <section class="panel">
+            <h3>👤 Cadastro rápido de usuários</h3>
+            <p class="sub">Área conectada ao PostgreSQL para salvar usuários da plataforma.</p>
 
             <div class="form-row">
-                <input id="u_name" placeholder="Nome" />
+                <input id="u_name" placeholder="Nome do usuário" />
                 <input id="u_email" placeholder="Email" />
-                <button class="btn-postgres" onclick="salvarUsuario()">Salvar</button>
-                <button class="btn-postgres" onclick="listarUsuarios()">Listar Usuários</button>
-                <button class="btn-secondary" onclick="limparResultado('res-postgres')">Limpar</button>
+                <button class="btn btn-postgres" onclick="salvarUsuario()">Salvar</button>
+                <button class="btn btn-secondary" onclick="listarUsuarios()">Listar</button>
             </div>
 
             <div class="resultado" id="res-postgres">Aguardando...</div>
         </section>
 
-        <section class="sec-mongo">
-            <h2>🕹️ Catálogo de Jogos <span class="badge badge-mongo">MongoDB</span></h2>
-            <p class="helper">Cadastre jogos e visualize o catálogo armazenado em documentos.</p>
+        <section class="panel">
+            <h3>👥 Sistema de amigos</h3>
+            <p class="sub">Área conectada ao Neo4j para criar amizades entre usuários.</p>
 
             <div class="form-row">
-                <input id="g_title" placeholder="Título do Jogo" />
-                <input id="g_genre" placeholder="Gênero" />
-                <button class="btn-mongo" onclick="salvarJogo()">Adicionar</button>
-                <button class="btn-mongo" onclick="listarJogos()">Listar Jogos</button>
-                <button class="btn-secondary" onclick="limparResultado('res-mongo')">Limpar</button>
+                <input id="f_user1" placeholder="Jogador 1" />
+                <input id="f_user2" placeholder="Jogador 2" />
+                <button class="btn btn-neo4j" onclick="criarAmizade()">Criar amizade</button>
             </div>
-
-            <div class="resultado" id="res-mongo">Aguardando...</div>
-        </section>
-
-        <section class="sec-redis">
-            <h2>🏆 Ranking Global <span class="badge badge-redis">Redis</span></h2>
-            <p class="helper">Área reservada para o ranking global quando o Redis for configurado.</p>
 
             <div class="form-row">
-                <input id="r_user" placeholder="Jogador" disabled />
-                <input id="r_score" type="number" placeholder="Pontos" disabled />
-                <button class="btn-redis" onclick="salvarRanking()" disabled>Enviar Score</button>
-                <button class="btn-secondary" onclick="limparResultado('res-redis')">Limpar</button>
+                <input id="busca_user" placeholder="Buscar amigos de..." />
+                <button class="btn btn-neo4j" onclick="buscarAmigos()">Buscar</button>
+                <button class="btn btn-secondary" onclick="verNos()">Ver nós</button>
             </div>
 
-            <div class="resultado" id="res-redis">
-                <span class="pendente">⏳ Redis ainda não foi configurado.</span>
-            </div>
+            <div class="resultado" id="res-neo4j">Aguardando...</div>
         </section>
     </div>
 </div>
@@ -317,10 +485,6 @@
 
     function setHtml(id, content) {
         document.getElementById(id).innerHTML = content;
-    }
-
-    function limparResultado(id) {
-        setHtml(id, "Aguardando...");
     }
 
     function limparCampos(...ids) {
@@ -353,6 +517,134 @@
         }
     }
 
+    function renderGames(games) {
+        const grid = document.getElementById("games-grid");
+        const count = document.getElementById("count-jogos");
+
+        count.textContent = Array.isArray(games) ? games.length : 0;
+
+        if (!Array.isArray(games) || games.length === 0) {
+            grid.innerHTML = "";
+            setHtml("res-mongo", '<span class="erro">Nenhum jogo cadastrado.</span>');
+            return;
+        }
+
+        setHtml("res-mongo", `<span class="sucesso">✅ ${games.length} jogo(s) carregado(s) do MongoDB.</span>`);
+
+        grid.innerHTML = games.map(game => `
+            <div class="game-card">
+                <div class="game-banner">🎮</div>
+                <div class="game-content">
+                    <h4>${game.title ?? "Sem título"}</h4>
+                    <div class="tag">${game.genre ?? "Sem gênero"}</div>
+                    <p style="color:#94a3b8; font-size:0.92rem;">
+                        Jogo salvo no catálogo da plataforma.
+                    </p>
+                    <div class="game-actions">
+                        <button class="btn btn-mongo" onclick="alert('Função de avaliação será implementada depois.')">Avaliar</button>
+                        <button class="btn btn-secondary" onclick="alert('Detalhes do jogo podem ser adicionados depois.')">Detalhes</button>
+                    </div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    async function listarJogos() {
+        try {
+            const res = await fetch(`${API}/games`);
+            const data = await parseResponse(res);
+
+            if (Array.isArray(data)) {
+                renderGames(data);
+            } else {
+                document.getElementById("games-grid").innerHTML = "";
+                setHtml("res-mongo", `<span class="erro">❌ ${data.error || data.info || "Erro ao buscar jogos."}</span>`);
+            }
+        } catch {
+            document.getElementById("games-grid").innerHTML = "";
+            setHtml("res-mongo", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function salvarJogo() {
+        const title = document.getElementById("g_title").value.trim();
+        const genre = document.getElementById("g_genre").value.trim();
+
+        if (!title || !genre) {
+            setHtml("res-mongo", '<span class="erro">⚠️ Preencha título e gênero.</span>');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/games`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, genre })
+            });
+
+            const data = await parseResponse(res);
+
+            if (data.status) {
+                setHtml("res-mongo", `<span class="sucesso">${data.status}</span>`);
+                limparCampos("g_title", "g_genre");
+                listarJogos();
+            } else {
+                setHtml("res-mongo", `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar jogo."}</span>`);
+            }
+        } catch {
+            setHtml("res-mongo", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function salvarUsuario() {
+        const name = document.getElementById("u_name").value.trim();
+        const email = document.getElementById("u_email").value.trim();
+
+        if (!name || !email) {
+            setHtml("res-postgres", '<span class="erro">⚠️ Preencha nome e email.</span>');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/users`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, balance: 0 })
+            });
+
+            const data = await parseResponse(res);
+
+            if (data.status) {
+                setHtml("res-postgres", `<span class="sucesso">${data.status}</span>`);
+                limparCampos("u_name", "u_email");
+            } else {
+                setHtml("res-postgres", `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar usuário."}</span>`);
+            }
+        } catch {
+            setHtml("res-postgres", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
+    async function listarUsuarios() {
+        try {
+            const res = await fetch(`${API}/users`);
+            const data = await parseResponse(res);
+
+            if (Array.isArray(data) && data.length > 0) {
+                setHtml(
+                    "res-postgres",
+                    `<span class="sucesso">${data.map(u => `• ${u.name} | ${u.email} | saldo: ${u.balance}`).join("\n")}</span>`
+                );
+            } else if (Array.isArray(data) && data.length === 0) {
+                setHtml("res-postgres", '<span class="erro">Nenhum usuário cadastrado.</span>');
+            } else {
+                setHtml("res-postgres", `<span class="erro">❌ ${data.error || data.info || "Erro ao listar usuários."}</span>`);
+            }
+        } catch {
+            setHtml("res-postgres", '<span class="erro">❌ Erro ao conectar no backend.</span>');
+        }
+    }
+
     async function criarAmizade() {
         const user1 = document.getElementById("f_user1").value.trim();
         const user2 = document.getElementById("f_user2").value.trim();
@@ -371,14 +663,12 @@
 
             const data = await parseResponse(res);
 
-            setHtml(
-                "res-neo4j",
-                data.status
-                    ? `<span class="sucesso">${data.status}</span>`
-                    : `<span class="erro">❌ ${data.error || "Erro ao criar amizade."}</span>`
-            );
-
-            if (data.status) limparCampos("f_user1", "f_user2");
+            if (data.status) {
+                setHtml("res-neo4j", `<span class="sucesso">${data.status}</span>`);
+                limparCampos("f_user1", "f_user2");
+            } else {
+                setHtml("res-neo4j", `<span class="erro">❌ ${data.error || "Erro ao criar amizade."}</span>`);
+            }
         } catch {
             setHtml("res-neo4j", '<span class="erro">❌ Erro ao conectar no backend.</span>');
         }
@@ -420,115 +710,11 @@
                     `<span class="sucesso">${data.map(n => `• ${n.name} [${Array.isArray(n.tipo) ? n.tipo.join(", ") : n.tipo}]`).join("\n")}</span>`
                 );
             } else {
-                setHtml("res-neo4j", '<span class="erro">Nenhum nó encontrado. Crie uma amizade primeiro.</span>');
+                setHtml("res-neo4j", '<span class="erro">Nenhum nó encontrado.</span>');
             }
         } catch {
             setHtml("res-neo4j", '<span class="erro">❌ Erro ao conectar no backend.</span>');
         }
-    }
-
-    async function salvarUsuario() {
-        const name = document.getElementById("u_name").value.trim();
-        const email = document.getElementById("u_email").value.trim();
-
-        if (!name || !email) {
-            setHtml("res-postgres", '<span class="erro">⚠️ Preencha nome e email.</span>');
-            return;
-        }
-
-        try {
-            const res = await fetch(`${API}/users`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, balance: 0 })
-            });
-
-            const data = await parseResponse(res);
-
-            setHtml(
-                "res-postgres",
-                data.status
-                    ? `<span class="sucesso">${data.status}</span>`
-                    : `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar usuário."}</span>`
-            );
-
-            if (data.status) limparCampos("u_name", "u_email");
-        } catch {
-            setHtml("res-postgres", '<span class="erro">❌ Erro ao conectar no backend.</span>');
-        }
-    }
-
-    async function listarUsuarios() {
-        try {
-            const res = await fetch(`${API}/users`);
-            const data = await parseResponse(res);
-
-            if (Array.isArray(data) && data.length > 0) {
-                setHtml(
-                    "res-postgres",
-                    `<span class="sucesso">${data.map(u => `• ${u.name} | ${u.email} | saldo: ${u.balance}`).join("\n")}</span>`
-                );
-            } else if (data.error || data.info) {
-                setHtml("res-postgres", `<span class="erro">❌ ${data.error || data.info}</span>`);
-            } else {
-                setHtml("res-postgres", '<span class="erro">Nenhum usuário cadastrado.</span>');
-            }
-        } catch {
-            setHtml("res-postgres", '<span class="erro">❌ Erro ao conectar no backend.</span>');
-        }
-    }
-
-    async function salvarJogo() {
-        const title = document.getElementById("g_title").value.trim();
-        const genre = document.getElementById("g_genre").value.trim();
-
-        if (!title || !genre) {
-            setHtml("res-mongo", '<span class="erro">⚠️ Preencha título e gênero.</span>');
-            return;
-        }
-
-        try {
-            const res = await fetch(`${API}/games`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, genre })
-            });
-
-            const data = await parseResponse(res);
-
-            setHtml(
-                "res-mongo",
-                data.status
-                    ? `<span class="sucesso">${data.status}</span>`
-                    : `<span class="erro">❌ ${data.error || data.info || "Erro ao salvar jogo."}</span>`
-            );
-
-            if (data.status) limparCampos("g_title", "g_genre");
-        } catch {
-            setHtml("res-mongo", '<span class="erro">❌ Erro ao conectar no backend.</span>');
-        }
-    }
-
-    async function listarJogos() {
-        try {
-            const res = await fetch("/games");
-            const data = await res.json();
-
-            if (Array.isArray(data) && data.length > 0) {
-                document.getElementById("res-mongo").innerHTML =
-                    data.map(j => `• ${j.title} (${j.genre})`).join("<br>");
-            } else {
-                document.getElementById("res-mongo").innerHTML =
-                    "Nenhum jogo cadastrado.";
-            }
-        } catch (e) {
-            document.getElementById("res-mongo").innerHTML =
-                "Erro ao buscar jogos.";
-        }
-    }
-
-    function salvarRanking() {
-        setHtml("res-redis", '<span class="pendente">⏳ Redis ainda não foi configurado.</span>');
     }
 
     function bindEnter(inputId, action) {
@@ -539,15 +725,16 @@
         });
     }
 
+    bindEnter("g_title", salvarJogo);
+    bindEnter("g_genre", salvarJogo);
+    bindEnter("u_name", salvarUsuario);
+    bindEnter("u_email", salvarUsuario);
     bindEnter("f_user1", criarAmizade);
     bindEnter("f_user2", criarAmizade);
     bindEnter("busca_user", buscarAmigos);
-    bindEnter("u_name", salvarUsuario);
-    bindEnter("u_email", salvarUsuario);
-    bindEnter("g_title", salvarJogo);
-    bindEnter("g_genre", salvarJogo);
 
     checkStatus();
+    listarJogos();
 </script>
 </body>
 </html>
