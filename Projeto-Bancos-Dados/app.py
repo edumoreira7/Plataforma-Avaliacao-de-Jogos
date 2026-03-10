@@ -5,6 +5,7 @@ import base64
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+import redis
 
 load_dotenv()
 
@@ -87,17 +88,24 @@ except Exception as e:
     mongo_db = None
 
 # ============================================================
-# ⏳ REDIS (UPSTASH) - PREENCHER DEPOIS
+# REDIS
 # ============================================================
-# REDIS_URL = "rediss://default:SENHA@XXXX.upstash.io:6379"
-#
-# try:
-#     redis_client = redis.from_url(REDIS_URL, decode_responses=True)
-#     redis_client.ping()
-#     print("✅ Redis conectado com sucesso!")
-# except Exception as e:
-#     print(f"❌ Redis erro: {e}")
-#     redis_client = None
+
+try:
+    redis_client = redis.Redis(
+        host="redis-11824.c270.us-east-1-3.ec2.cloud.redislabs.com",
+        port=11824,
+        username="default",
+        password="SUA_SENHA",
+        decode_responses=True
+    )
+
+    redis_client.ping()
+    print("✅ Redis conectado com sucesso!")
+
+except Exception as e:
+    print(f"❌ Redis erro: {e}")
+    redis_client = None
 
 # ============================================================
 # ROTAS - STATUS
@@ -113,13 +121,14 @@ def home():
 
     mongodb_status = "✅ Conectado" if mongo_db is not None else "❌ Desconectado"
     postgres_status = "✅ Conectado" if pg_conn is not None else "❌ Desconectado"
+    redis_status = "✅ Conectado" if redis_client is not None else "❌ Desconectado"
 
     return jsonify({
         "backend": "GameHub Online",
         "neo4j": neo4j_status,
         "postgres": postgres_status,
         "mongodb": mongodb_status,
-        "redis": "⏳ Pendente - Upstash"
+        "redis": redis_status
     })
 
 # ============================================================
@@ -302,4 +311,5 @@ def update_ranking():
 # START
 # ============================================================
 if __name__ == "__main__":
+
     app.run(host="0.0.0.0", port=5000, debug=True)
