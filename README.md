@@ -80,7 +80,7 @@ Crie contas gratuitas nos seguintes serviços online:
 ### Passo 1 — Clonar o repositório
 
 ```bash
-git clone https://github.com/SEU_USUARIO/GameVault.git
+git clone https://github.com/SEU_USUARIO/Plataforma-Avaliacao-de-Jogos.git
 cd GameVault
 ```
 
